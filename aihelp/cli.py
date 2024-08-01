@@ -3,12 +3,27 @@ import subprocess
 import sys
 import re
 import argparse
+import json
 from groq import Groq
 from dotenv import load_dotenv
 load_dotenv()
 
 client = None
-DEFAULT_MODEL = "llama-3.1-8b-instant"
+ORIGINAL_DEFAULT_MODEL = "llama-3.1-8b-instant"
+CONFIG_FILE = os.path.expanduser("~/.aihelp_config.json")
+
+def load_config():
+    if os.path.exists(CONFIG_FILE):
+        with open(CONFIG_FILE, 'r') as f:
+            return json.load(f)
+    return {"default_model": ORIGINAL_DEFAULT_MODEL}
+
+def save_config(config):
+    with open(CONFIG_FILE, 'w') as f:
+        json.dump(config, f)
+
+config = load_config()
+DEFAULT_MODEL = config["default_model"]
 
 def init_client():
     global client
@@ -90,10 +105,33 @@ def interpret_and_execute(user_input, model):
 
 def main():
     parser = argparse.ArgumentParser(description="AIHelp: Interpret and execute natural language commands.")
-    parser.add_argument("command", nargs="+", help="The natural language command to interpret and execute.")
+    parser.add_argument("command", nargs="*", help="The natural language command to interpret and execute.")
     parser.add_argument("-m", "--model", default=DEFAULT_MODEL, help="Specify the Groq model to use (default: %(default)s)")
+    parser.add_argument("--show-model", action="store_true", help="Display the current default model")
+    parser.add_argument("--set-model", help="Set a new default model")
+    parser.add_argument("--reset-model", action="store_true", help="Reset the default model to the original")
 
     args = parser.parse_args()
+
+    if args.show_model:
+        print(f"Current default model: {DEFAULT_MODEL}")
+        return
+
+    if args.set_model:
+        config["default_model"] = args.set_model
+        save_config(config)
+        print(f"Default model has been set to: {args.set_model}")
+        return
+
+    if args.reset_model:
+        config["default_model"] = ORIGINAL_DEFAULT_MODEL
+        save_config(config)
+        print(f"Default model has been reset to: {ORIGINAL_DEFAULT_MODEL}")
+        return
+
+    if not args.command:
+        parser.print_help()
+        return
 
     init_client()
 

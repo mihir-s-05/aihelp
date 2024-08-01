@@ -6,42 +6,82 @@ AIHelp is a command-line tool that uses the GroqCloud API to interpret and execu
 
 1. Clone this repository
 2. Navigate to the project directory
-3. Run `pip install -e .`
+3. Install the required packages:
+   ```
+   pip install -r requirements.txt
+   ```
+4. Install the package:
+   ```
+   pip install -e .
+   ```
+
+## Configuration
+
+Create a `.env` file in the project root directory with your GroqCloud API key:
+
+```
+GROQ_API_KEY=your_api_key_here
+```
 
 ## Usage
 
-Set your GroqCloud API key as an environment variable:
-
-```
-export GROQ_API_KEY=your_api_key_here
-```
-
-Then use the tool:
+Use the tool with a natural language command:
 
 ```
 aihelp "your natural language command here"
 ```
 
-You can optionally specify a different Groq model using the `-m` flag:
+### Model Management
 
-```
-aihelp "your natural language command here" -m model_name
-```
+- Specify a different Groq model for a single command:
+  ```
+  aihelp "your natural language command here" -m model_name
+  ```
 
-For example:
+- Show the current default model:
+  ```
+  aihelp --show-model
+  ```
 
-```
-aihelp "copy data.txt from /home/user/documents to /home/user/backup"
-```
+- Set a new default model:
+  ```
+  aihelp --set-model model_name
+  ```
 
-Or with a specific model:
+- Reset to the original default model:
+  ```
+  aihelp --reset-model
+  ```
 
-```
-aihelp "copy data.txt from /home/user/documents to /home/user/backup" -m llama2-70b-4096
-```
+### Examples
+
+1. Default usage:
+   ```
+   aihelp "copy data.txt from /home/user/documents to /home/user/backup"
+   ```
+
+2. With a specific model (one-time use):
+   ```
+   aihelp "copy data.txt from /home/user/documents to /home/user/backup" -m llama-3.1-8b-instant
+   ```
+
+3. Set a new default model:
+   ```
+   aihelp --set-model llama-3.1-8b-instant
+   ```
+
+4. Show current default model:
+   ```
+   aihelp --show-model
+   ```
+
+5. Reset to original default model:
+   ```
+   aihelp --reset-model
+   ```
 
 ## Note
 
-This tool executes commands on your system. Use with caution and review the generated commands before execution.
-
-The default model used is "llama-3.1-8b-instant". You can change this by using the `-m` flag followed by the desired model name.
+- This tool executes commands on your system. Use with caution and review the generated commands before execution.
+- The original default model is "llama-3.1-8b-instant". You can change this permanently using `--set-model` or temporarily using the `-m` flag.
+- Your preferred model is stored in `~/.aihelp_config.json`.
