@@ -1,0 +1,23 @@
+# Virtual environment
+venv/
+
+# Package information
+*.egg-info/
+*.egg
+
+# Environment variables
+.env
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDE specific files (optional, but often helpful)
+.vscode/
+.idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db
