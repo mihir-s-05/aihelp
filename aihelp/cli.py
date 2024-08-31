@@ -4,6 +4,7 @@ import sys
 import re
 import argparse
 import json
+import shlex
 from groq import Groq
 from dotenv import load_dotenv
 load_dotenv()
@@ -44,21 +45,21 @@ def execute_command(command):
 
 def validate_command(command):
     dangerous_commands = ['rm -rf', 'mkfs', 'dd', '> /dev/sda', '| sh', '> /dev/null']
-    
+
     for dangerous in dangerous_commands:
         if dangerous in command:
             raise ValueError(f"Potentially dangerous command detected: {dangerous}")
-    
+
     file_paths = re.findall(r'/[\w/.-]+', command)
     for path in file_paths:
         if not os.path.normpath(path).startswith('/'):
             raise ValueError(f"Invalid file path detected: {path}")
-    
+
     return True
 
 def check_file_directory(command):
     dir_paths = re.findall(r'(?:^|\s)(/[\w/.-]+)(?=\s|$)', command)
-    
+
     for path in dir_paths:
         if not os.path.exists(path):
             parent_dir = os.path.dirname(path)
@@ -67,8 +68,23 @@ def check_file_directory(command):
                 os.makedirs(path, exist_ok=True)
             else:
                 print(f"Parent directory does not exist: {parent_dir}")
-    
+
     return command
+
+def validate_bash_command(command):
+    try:
+        # Use shlex to split the command into a list
+        command_list = shlex.split(command)
+
+        # Run the command in a dry-run mode
+        result = subprocess.run(command_list, capture_output=True, text=True, shell=False, check=True)
+
+        # If the command runs successfully in dry-run mode, it's considered valid
+        return True
+    except subprocess.CalledProcessError as e:
+        raise ValueError(f"Bash command validation error: {e.stderr.strip()}")
+    except Exception as e:
+        raise ValueError(f"An error occurred during command validation: {e}")
 
 def interpret_and_execute(user_input, model):
     try:
@@ -91,6 +107,7 @@ def interpret_and_execute(user_input, model):
         bash_commands = response.choices[0].message.content.strip()
 
         validate_command(bash_commands)
+        validate_bash_command(bash_commands)
 
         bash_commands = check_file_directory(bash_commands)
 
@@ -104,7 +121,7 @@ def interpret_and_execute(user_input, model):
         print(f"An error occurred: {e}")
 
 def main():
-    parser = argparse.ArgumentParser(description="AIHelp: Interpret and execute natural language commands.")
+    parser = argparse.ArgumentParser(description="AIHelp: Interprets and executes natural language commands.")
     parser.add_argument("command", nargs="*", help="The natural language command to interpret and execute.")
     parser.add_argument("-m", "--model", default=DEFAULT_MODEL, help="Specify the Groq model to use (default: %(default)s)")
     parser.add_argument("--show-model", action="store_true", help="Display the current default model")
