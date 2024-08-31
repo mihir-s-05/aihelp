@@ -10,7 +10,7 @@ AIHelp is a command-line tool that uses the GroqCloud API to interpret and execu
 - **Python 3.6 or higher**
 - **pip** (Python package installer)
 
-### Linux/Mac Installation
+### Installation
 
 1. **Clone this repository**:
    ```bash
@@ -42,37 +42,6 @@ AIHelp is a command-line tool that uses the GroqCloud API to interpret and execu
 5. **Test the Installation**:
    Open a new terminal window and test the command:
    ```bash
-   aihelp --help
-   ```
-
-### Windows Installation
-
-1. **Clone this repository**:
-   Open the Command Prompt or PowerShell and run:
-   ```powershell
-   git clone https://github.com/yourusername/aihelp.git
-   cd aihelp
-   ```
-
-2. **Install the required packages**:
-   ```powershell
-   pip install -r requirements.txt
-   ```
-
-3. **Install the package**:
-   ```powershell
-   pip install .
-   ```
-
-4. **Add AIHelp to PATH**:
-   To make `aihelp` available globally, you need to add the Scripts directory to your PATH. This is typically located at `C:\Users\YourUsername\AppData\Local\Programs\Python\PythonXX\Scripts`.
-
-   - Search for "Environment Variables" in the Windows search bar.
-   - Edit the `PATH` variable and add the directory above.
-
-5. **Test the Installation**:
-   Open a new Command Prompt or PowerShell window and test the command:
-   ```powershell
    aihelp --help
    ```
 
