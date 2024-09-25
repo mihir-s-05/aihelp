@@ -14,7 +14,7 @@ AIHelp is a command-line tool that uses the GroqCloud API to interpret and execu
 
 1. **Clone this repository**:
    ```bash
-   git clone https://github.com/yourusername/aihelp.git
+   git clone https://github.com/mihir-s-05/aihelp.git
    cd aihelp
    ```
 
