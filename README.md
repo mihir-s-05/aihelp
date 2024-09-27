@@ -1,4 +1,3 @@
-
 # AIHelp
 
 AIHelp is a command-line tool that uses the GroqCloud API to interpret and execute natural language commands.
@@ -8,38 +7,29 @@ AIHelp is a command-line tool that uses the GroqCloud API to interpret and execu
 ### Prerequisites
 
 - **Python 3.6 or higher**
-- **pip** (Python package installer)
+- **pipx** (recommended for installing Python applications)
 
-### Installation
+### Installation Steps
 
-1. **Clone this repository**:
+1. **Install pipx** (if not already installed):
+   ```bash
+   sudo apt install pipx
+   pipx ensurepath
+   ```
+   After running these commands, **restart your terminal** or run `source ~/.bashrc` to update your PATH.
+
+2. **Clone this repository**:
    ```bash
    git clone https://github.com/mihir-s-05/aihelp.git
    cd aihelp
    ```
 
-2. **Install the required packages**:
+3. **Install AIHelp using pipx**:
    ```bash
-   pip install -r requirements.txt
+   pipx install .
    ```
 
-3. **Install the package**:
-   ```bash
-   pip install .
-   ```
-
-4. **Ensure the Command is Available**:
-   - The `aihelp` script will be installed in your local bin directory (`/home/yourusername/.local/bin`).
-   - Add this directory to your `PATH` by adding the following line to your `~/.bash_profile` (create it if it doesn’t exist):
-     ```bash
-     [ -f "$HOME/.bashrc" ] && source "$HOME/.bashrc"
-     ```
-     And ensure `~/.bashrc` contains:
-     ```bash
-     export PATH="$PATH:/home/yourusername/.local/bin"
-     ```
-
-5. **Test the Installation**:
+4. **Test the Installation**:
    Open a new terminal window and test the command:
    ```bash
    aihelp --help
@@ -47,11 +37,22 @@ AIHelp is a command-line tool that uses the GroqCloud API to interpret and execu
 
 ## Configuration
 
-Create a `.env` file in the project root directory with your GroqCloud API key:
+Set up your GroqCloud API key as an environment variable:
 
-```
-GROQ_API_KEY=your_api_key_here
-```
+1. Open your shell configuration file (e.g., `~/.bashrc`, `~/.zshrc`):
+   ```bash
+   nano ~/.bashrc
+   ```
+
+2. Add the following line at the end of the file:
+   ```bash
+   export GROQ_API_KEY=your_api_key_here
+   ```
+
+3. Save the file and reload your shell configuration:
+   ```bash
+   source ~/.bashrc
+   ```
 
 ## Usage
 
@@ -115,6 +116,13 @@ aihelp "your natural language command here"
 - This tool executes commands on your system. Use with caution and review the generated commands before execution.
 - The original default model is "llama-3.1-8b-instant". You can change this permanently using `--set-model` or temporarily using the `-m` flag.
 - Your preferred model is stored in `~/.aihelp_config.json`.
+
+## Uninstallation
+
+To uninstall AIHelp, use the following command:
+```bash
+pipx uninstall aihelp
+```
 
 ## License
 
