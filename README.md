@@ -49,7 +49,7 @@ It's highly recommended to use Python virtual environments to manage dependencie
 
 1.  **Clone this repository**:
     ```bash
-    git clone https://github.com/your-username/aihelp.git # Replace with the actual repository URL
+    git clone https://github.com/mihir-s-05/aihelp.git # Replace with the actual repository URL
     cd aihelp
     ```
 
