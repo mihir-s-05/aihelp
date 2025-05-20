@@ -25,7 +25,7 @@ AIHelp is a versatile command-line tool that translates your natural language qu
         *   `none`: No allowlist/blocklist policy is enforced (default).
     *   Manage the policy mode and the allow/block lists via CLI commands.
 *   **Comprehensive Configuration:**
-    *   User-specific settings are stored in `~/.aihelp_config.json`.
+    *   User-specific settings are stored in `~/.aihelp_config.json`. The `~` symbol represents your home directory (e.g., `/Users/yourusername` on macOS, `/home/yourusername` on Linux, or `C:\Users\yourusername` on Windows).
     *   This file includes:
         *   Default LLM provider and model preferences for each provider.
         *   Environment variable names for API keys (API keys themselves are **not** stored).
@@ -33,15 +33,17 @@ AIHelp is a versatile command-line tool that translates your natural language qu
         *   Command allowlist, blocklist, and the active policy mode.
     *   The configuration file is automatically created with sensible defaults on first run or if missing.
 *   **Command Logging:**
-    *   All interpreted commands, execution attempts, and key events can be logged to `~/.aihelp_command_log.txt` when the `--log` flag is used.
+    *   All interpreted commands, execution attempts, and key events can be logged to `~/.aihelp_command_log.txt` (located in your home directory as described above) when the `--log` flag is used.
 
 ## Installation
 
 ### Prerequisites
 
-*   **Python 3.7 or higher**
-*   **pip** (Python package installer)
-*   **Git** (for cloning the repository)
+*   **Python 3.9 or higher** (due to dependencies like `google-generativeai`).
+*   **pip** (Python package installer).
+*   **Git** (for cloning the repository).
+
+It's highly recommended to use Python virtual environments to manage dependencies and avoid conflicts with system-wide packages. This also helps in standardizing `python` and `pip` command usage.
 
 ### Installation Steps
 
@@ -51,22 +53,30 @@ AIHelp is a versatile command-line tool that translates your natural language qu
     cd aihelp
     ```
 
-2.  **Install dependencies and the package**:
-    It's recommended to install in a virtual environment:
+2.  **Create and activate a virtual environment (recommended):**
     ```bash
+    # On macOS/Linux
     python3 -m venv .venv
-    source .venv/bin/activate  # On Windows use `.venv\Scripts\activate`
-    pip install -r requirements.txt
-    pip install .
+    source .venv/bin/activate
+    
+    # On Windows (Command Prompt)
+    python -m venv .venv
+    .venv\Scripts\activate.bat
+    
+    # On Windows (PowerShell)
+    python -m venv .venv
+    .venv\Scripts\Activate.ps1
     ```
-    Alternatively, for a system-wide installation (less recommended):
+    If you're not using a virtual environment, you might need to use `python3` and `pip3` instead of `python` and `pip` on some systems, especially macOS and Linux. Using virtual environments avoids this ambiguity.
+
+3.  **Install dependencies and the package**:
+    (Inside the activated virtual environment)
     ```bash
     pip install -r requirements.txt
     pip install .
     ```
-    If you used `pipx` before, you might need to uninstall the old version first (`pipx uninstall aihelp`).
 
-3.  **Test the Installation**:
+4.  **Test the Installation**:
     Open a new terminal window (or ensure your virtual environment is active) and test the command:
     ```bash
     aihelp --help
@@ -85,30 +95,63 @@ Supported environment variable names:
 *   **Google (Gemini):** `GOOGLE_API_KEY`
 *   **Anthropic (Claude):** `ANTHROPIC_API_KEY`
 
-**Example (for bash/zsh):**
+**Setting Environment Variables:**
 
-1.  Open your shell configuration file (e.g., `~/.bashrc`, `~/.zshrc`):
-    ```bash
-    nano ~/.bashrc
-    ```
+*   **macOS & Linux (bash/zsh):**
+    To set an environment variable for your current session and persistently for future sessions, add the `export` command to your shell's profile file (e.g., `~/.bashrc`, `~/.zshrc`, or `~/.profile`).
 
-2.  Add the following lines for the providers you want to use, replacing `your_api_key_here` with your actual keys:
-    ```bash
-    export GROQ_API_KEY="your_groq_api_key_here"
-    # export OPENAI_API_KEY="your_openai_api_key_here"
-    # export GOOGLE_API_KEY="your_google_api_key_here"
-    # export ANTHROPIC_API_KEY="your_anthropic_api_key_here"
-    ```
+    1.  Open your shell configuration file. For example, for `bash`:
+        ```bash
+        nano ~/.bashrc
+        ```
+        For `zsh`:
+        ```bash
+        nano ~/.zshrc
+        ```
+    2.  Add the following lines for the providers you want to use, replacing `your_api_key_here` with your actual keys:
+        ```bash
+        export GROQ_API_KEY="your_groq_api_key_here"
+        # export OPENAI_API_KEY="your_openai_api_key_here"
+        # export GOOGLE_API_KEY="your_google_api_key_here"
+        # export ANTHROPIC_API_KEY="your_anthropic_api_key_here"
+        ```
+    3.  Save the file and reload your shell configuration (or open a new terminal):
+        ```bash
+        source ~/.bashrc  # Or source ~/.zshrc, etc.
+        ```
 
-3.  Save the file and reload your shell configuration:
-    ```bash
-    source ~/.bashrc
-    ```
-    (Or simply open a new terminal window.)
+*   **Windows:**
+
+    *   **Command Prompt (Current Session Only):**
+        To set an environment variable for the current Command Prompt session only:
+        ```cmd
+        set GROQ_API_KEY="your_groq_api_key_here"
+        ```
+        This variable will be lost when the Command Prompt window is closed.
+
+    *   **PowerShell (Current Session Only):**
+        To set an environment variable for the current PowerShell session only:
+        ```powershell
+        $env:GROQ_API_KEY="your_api_key_here"
+        ```
+        This variable will be lost when the PowerShell session is closed.
+
+    *   **Persistent (System Properties):**
+        For persistent environment variables on Windows:
+        1.  Search for "environment variables" in the Start Menu.
+        2.  Click on "Edit the system environment variables".
+        3.  In the System Properties window, click the "Environment Variables..." button.
+        4.  In the Environment Variables window, you can add or modify User variables (for your account) or System variables (for all users). Click "New..." under the appropriate section.
+        5.  Enter the variable name (e.g., `GROQ_API_KEY`) and the variable value (your API key).
+        6.  Click OK on all windows to save. You may need to restart your terminal or log out and log back in for these changes to take full effect.
 
 ### 2. Configuration File
 
-The first time you run `aihelp` (e.g., `aihelp --list-providers`), it will automatically create a configuration file at `~/.aihelp_config.json` with default settings if one doesn't already exist. You can manage most settings through the CLI, but you can also inspect this file.
+The first time you run `aihelp` (e.g., `aihelp --list-providers`), it will automatically create a configuration file at `~/.aihelp_config.json` with default settings if one doesn't already exist. The `~` symbol represents your home directory:
+*   On **macOS and Linux**, this is typically `/Users/yourusername` or `/home/yourusername`.
+*   On **Windows**, this is typically `C:\Users\yourusername`.
+
+You can manage most settings through the CLI, but you can also inspect this file.
 
 ## Usage
 
@@ -222,14 +265,16 @@ Control which commands can be executed. Commands are checked after generation an
 
 ### Logging
 
-Enable logging of commands and actions to `~/.aihelp_command_log.txt`:
+Enable logging of commands and actions to `~/.aihelp_command_log.txt` (in your home directory):
 ```bash
 aihelp --log "your query here"
 ```
 
 ## Configuration File Details
 
-The configuration file is located at `~/.aihelp_config.json`. It typically stores:
+The configuration file is located at `~/.aihelp_config.json`. The `~` symbol represents your user's home directory (e.g., `/Users/yourusername` on macOS, `/home/yourusername` on Linux, or `C:\Users\yourusername` on Windows).
+
+It typically stores:
 
 ```json
 {
@@ -262,7 +307,7 @@ It's generally recommended to manage these settings via the CLI commands.
 ## Uninstallation
 
 If installed in a virtual environment, simply deactivate and delete the environment.
-If installed with `pip` globally:
+If installed with `pip` globally (ensure you use `pip3` or `pip` consistently with how you installed it):
 ```bash
 pip uninstall aihelp
 ```
